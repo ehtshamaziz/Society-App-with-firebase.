@@ -1,0 +1,12 @@
+export { default as M_All_Bills } from "./M_All_Bills";
+export { default as M_Bills } from "./M_Bills";
+export { default as M_Complaints } from "./M_Complaints";
+export { default as M_Dashboard } from "./M_Dashboard";
+export { default as M_Login } from "./M_Login";
+export { default as M_Maintain_Requests } from "./M_Maintain_Requests";
+export { default as M_Notices } from "./M_Notices";
+export { default as M_Notices_General } from "./M_Notices_General";
+export { default as M_Notices_General_New } from "./M_Notices_General_New";
+export { default as M_Notices_Specific } from "./M_Notices_Specific";
+export { default as M_Resident_Info } from "./M_Resident_Info";
+export { default as M_Residents } from "./M_Residents";

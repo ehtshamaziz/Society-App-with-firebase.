@@ -1,4 +1,5 @@
 // import { StatusBar } from "expo-status-bar";
+import React, { useState, useEffect } from "react";
 import {
   Text,
   View,
@@ -10,129 +11,108 @@ import {
 } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome5";
 // import Constants from "expo-constants";
+import HeadingView from "../../components/headingView";
+import FloatingButton from "../../components/floatingButton";
+import { useTheme } from "@react-navigation/native";
+import firebase from "firebase/compat/app";
+import "firebase/compat/firestore";
+
+function ViewBox(props) {
+  const { colors } = useTheme();
+  return (
+    <Pressable onPress={props.func}>
+      <View style={[styles.viewbox, { backgroundColor: colors.card }]}>
+        <Image style={styles.img} source={props.img} />
+        <View style={styles.viewboxContent}>
+          <Text style={[styles.text, { color: colors.text, fontSize: 15, fontWeight: 'bold' }]}>
+            {props.name}
+          </Text>
+          <Text style={[styles.text, { color: colors.primary }]}>
+            {props.cnic}
+          </Text>
+          <Text style={[styles.text, { color: colors.text }]}>
+            {" "}
+            Plot#{props.plot}
+          </Text>
+        </View>
+      </View>
+    </Pressable>
+  );
+}
 
 export default function M_Resident({ navigation }) {
+  const [data, setData] = useState([]);
 
-  function ViewBox(props) {
-    return (
-      <Pressable onPress={props.func}>
-        <View style={[styles.viewbox, props.viewBoxStyle]}>
-          <Image
-            style={styles.img}
-            source={props.img}
-          />
-          <View style={[styles.viewboxContent, props.viewBoxContentStyle]}>
-            <Text style={styles.text}>{props.name}</Text>
-            <Text style={styles.text}>{props.cnic}</Text>
-            <Text style={styles.text}> Plot#{props.plot}</Text>
-          </View>
-        </View>
-      </Pressable>
-    );
-  }
+  const { colors } = useTheme();
 
-  function nav() {
-    navigation.navigate("M_Resident_Info");
-  }
+  useEffect(() => {
+    const firestore = firebase.firestore();
+    // STORE USER DATA INTO CLOUD FIRESTORE
+    firestore
+      .collection("users")
+      .get()
+      .then((snapshot) => {
+        const dataas = [];
+        snapshot.forEach((doc) => {
+          const user = doc.data();
+          user.id = doc.id;
+          dataas.push(user);
+        });
+        setData(dataas);
+      })
+      .catch((error) => {
+        console.log("Error getting documents:", error);
+      });
+  });
+
 
   return (
     <View style={styles.mainContainer}>
-      <View style={styles.topContainer}>
-        <Icon name="users" size={32} solid color="#eeeeee" />
-        <Text style={styles.heading}>Manage Residents</Text>
-      </View>
+      <HeadingView text="Manage Residents" icon="users" />
 
-      <View style={styles.searchContainer}>
-        <View style={styles.search}>
-          <TextInput
-            style={styles.search_input}
-            placeholder="Search"
-          ></TextInput>
-          <Pressable onPress={() => console.log("Search")}>
-            <Icon name="search" size={22} solid color="#393E46" />
-          </Pressable>
-        </View>
-        <View style={styles.filter_button}>
-          <Pressable onPress={() => console.log("Filter")}>
-            <Icon name="filter" size={32} color="#393E46" />
-          </Pressable>
-        </View>
-      </View>
-
-      <ScrollView>
+      <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.viewboxContainer}>
-          <ViewBox
-            name="Humza"
-            cnic="00000-0000000-0"
-            plot="69"
-            func={nav}
-            img={require("../../assets/avatar1.png")}
-          />
-          <ViewBox
-            name="Ehtsham"
-            cnic="23431-2433232-4"
-            plot="32"
-            func={nav}
-            img={require("../../assets/avatar2.png")}
-          />
-          <ViewBox
-            name="Humza"
-            cnic="00000-0000000-0"
-            plot="69"
-            func={nav}
-            img={require("../../assets/avatar1.png")}
-          />
-          <ViewBox
-            name="Ehtsham"
-            cnic="23431-2433232-4"
-            plot="32"
-            func={nav}
-            img={require("../../assets/avatar2.png")}
-          />
-          <ViewBox
-            name="Humza"
-            cnic="00000-0000000-0"
-            plot="69"
-            func={nav}
-            img={require("../../assets/avatar1.png")}
-          />
-          <ViewBox
-            name="Ehtsham"
-            cnic="23431-2433232-4"
-            plot="32"
-            func={nav}
-            img={require("../../assets/avatar2.png")}
-          />
+          {data.map((user, index) => (
+            <ViewBox
+              key={index}
+              name={user.name}
+              cnic={user.cnic}
+              plot={user.plotNumber}
+              img={require("../../assets/avatar2.png")}
+              func={() => {
+                navigation.navigate("M_Resident_Info", {
+                  name: user.name,
+                  number: user.number,
+                  plotNumber: user.plotNumber,
+                  plotSize: user.plotSize,
+                  password: user.password,
+                  cnic: user.cnic,
+                  id: user.id
+                });
+              }}
+            />
+          ))}
         </View>
       </ScrollView>
+      <FloatingButton
+        icon="plus"
+        func={() => navigation.navigate("M_Resident_New")}
+      />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   mainContainer: {
-    justifyContent: "center",
+    flex: 1,
+    paddingHorizontal: 20,
     // paddingTop: Constants.statusBarHeight,
-  },
-  topContainer: {
-    backgroundColor: "#00ADB5",
-    alignItems: "center",
-    paddingTop: 30,
-    paddingBottom: 15,
-    flexDirection: "row",
-    justifyContent: "center",
-  },
-  heading: {
-    fontSize: 30,
-    color: "#eeeeee",
-    marginLeft: 10,
   },
   searchContainer: {
     flexDirection: "row",
-    paddingVertical: 20,
+    paddingBottom: 20,
     paddingHorizontal: 10,
     alignItems: "center",
-    backgroundColor: "#00ADB5",
   },
   search: {
     flexDirection: "row",
@@ -145,9 +125,9 @@ const styles = StyleSheet.create({
     overflow: "hidden",
   },
   search_input: {
-    fontSize: 18,
-    paddingVertical: 12,
-    paddingHorizontal: 24,
+    fontSize: 16,
+    paddingVertical: 8,
+    paddingHorizontal: 16,
     color: "#808080",
     flex: 1,
   },
@@ -156,13 +136,6 @@ const styles = StyleSheet.create({
     flex: 1,
     marginLeft: 10,
   },
-
-  viewboxContainer: {
-    paddingTop: 7,
-    paddingHorizontal: 10,
-    paddingBottom: 90,
-    backgroundColor: "#e9e9e9",
-  },
   viewbox: {
     borderRadius: 10,
     flexDirection: "row",
@@ -170,13 +143,15 @@ const styles = StyleSheet.create({
     paddingHorizontal: 25,
     paddingVertical: 5,
     marginBottom: 7,
-    backgroundColor: "#ffffff",
+    shadowColor: "#000",
+    elevation: 4,
   },
   viewboxContent: {
     marginLeft: 20,
   },
   text: {
-    margin: 5,
+    margin: 4,
+    fontSize: 13,
   },
   img: {
     width: 65,

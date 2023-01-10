@@ -1,35 +1,53 @@
-import { View, Text, StyleSheet, Pressable, Image } from 'react-native'
-import React from 'react'
+import { StyleSheet, Text, View, Pressable } from "react-native";
+import React from "react";
+import Icon from "react-native-vector-icons/FontAwesome5";
+import { useTheme } from "@react-navigation/native";
 
-export default function ViewBox(props) {
-    return (
-        <Pressable onPress={props.func}>
-            <View style={[styles.viewbox, props.viewBoxStyle]}>
-                <Image
-                    style={styles.img}
-                    source={props.img}
-                />
-                <View style={[styles.viewboxContent, props.viewBoxContentStyle]}>
-                    <Text style={styles.text}>{props.name}</Text>
-                    <Text style={styles.text}>{props.cnic}</Text>
-                    <Text style={styles.text}> Plot#{props.plot}</Text>
-                </View>
-            </View>
-        </Pressable>
-    );
+export default function HeadingView(props) {
+  const { colors } = useTheme();
+  return (
+    <Pressable onPress={props.func}>
+      <View style={[styles.viewbox, { backgroundColor: colors.card }]}>
+        {props.icon && (
+          <View style={styles.viewboxIcon}>
+            <Icon name={props.icon} size={42} color={colors.text} />
+          </View>
+        )}
+        <View style={styles.viewboxContent}>
+          <Text style={[styles.text, { fontSize: 14, color: colors.primary }]}>
+            {props.title}
+          </Text>
+          <Text style={[styles.text, { color: colors.border }]}>
+            {props.text}
+          </Text>
+        </View>
+      </View>
+    </Pressable>
+  );
 }
 
 const styles = StyleSheet.create({
-    viewbox: {
-        borderRadius: 10,
-        flexDirection: "row",
-        alignItems: "center",
-        paddingHorizontal: 25,
-        paddingVertical: 15,
-        marginBottom: 7,
-        backgroundColor: "#ffffff",
-    },
-    viewboxContent: {
-        marginLeft: 20,
-    },
-})
+  viewbox: {
+    borderRadius: 10,
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 12,
+    paddingVertical: 20,
+    marginBottom: 10,
+    shadowColor: "#000",
+    elevation: 4,
+  },
+  viewboxIcon: {
+    marginHorizontal: 10,
+    flex: 1,
+    alignItems: "center",
+  },
+  viewboxContent: {
+    marginLeft: 10,
+    flex: 4,
+  },
+  text: {
+    marginVertical: 4,
+    fontSize: 12,
+  },
+});

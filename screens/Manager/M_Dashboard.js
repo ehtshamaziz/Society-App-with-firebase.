@@ -1,10 +1,44 @@
-import { Text, View, StyleSheet, Pressable, Image, StatusBar } from "react-native";
+import {
+  Text,
+  View,
+  StyleSheet,
+  Pressable,
+  Image,
+  StatusBar,
+} from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome5";
-import Constants from "expo-constants";
+// import Constants from "expo-constants";
+import SvgImage from "../../assets/ManagerDashboard.svg";
+import { useTheme } from "@react-navigation/native";
 
 export default function M_Dashboard({ navigation }) {
+  const { colors } = useTheme();
+  function DashboardItem(props) {
+    return (
+      <Pressable
+        onPress={() => navigation.navigate(props.navigateTo)}
+        style={[styles.dashBoardItem, { backgroundColor: colors.card }]}
+      >
+        <View
+          style={{
+            backgroundColor: props.iconBackground,
+            borderRadius: 100,
+            width: 70,
+            height: 70,
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <Icon name={props.icon} size={30} color="#fff" />
+        </View>
+        <Text style={[styles.dashBoardItem_text, { color: colors.text }]}>{props.text}</Text>
+      </Pressable>
+    );
+  }
+
   return (
     <View style={styles.mainContainer}>
+      {/* <StatusBar backgroundColor="red" style="dark-content" /> */}
       <View style={styles.topContainer}>
         <View
           style={{
@@ -14,69 +48,46 @@ export default function M_Dashboard({ navigation }) {
             paddingVertical: 10,
           }}
         >
-          <Text style={styles.headingSmall}>Manager Dashboard</Text>
-          <Image
-            style={{ width: 90, height: 90 }}
-            source={{
-              uri: "https://cdn-icons-png.flaticon.com/512/1001/1001209.png",
-            }}
-          />
-          <Text style={styles.heading}>Society Management System</Text>
+          <Text style={[styles.headingSmall, { color: colors.primary }]}>Manager Dashboard</Text>
+          <SvgImage width={240} height={180} />
         </View>
       </View>
       <View style={styles.bottomContainer}>
         <View style={{ flexDirection: "row", flex: 1 }}>
-          <Pressable
-            onPress={() => navigation.navigate("M_Residents")}
-            style={styles.dashBoardItem}
-          >
-            <Icon name="users" size={45} color="#393E46" />
-            <Text style={styles.dashBoardItem_text}>Manage Residents</Text>
-          </Pressable>
-
-          <Pressable
-            onPress={() => navigation.navigate("M_Notices")}
-            style={styles.dashBoardItem}
-          >
-            <Icon name="sticky-note" size={45} solid color="#393E46" />
-            <Text style={styles.dashBoardItem_text}>Society Notices</Text>
-          </Pressable>
+          <DashboardItem
+            text="Manage Residents"
+            icon="users"
+            navigateTo="M_Residents"
+            iconBackground="#4169e1"
+          />
+          <DashboardItem
+            text="Society Notices"
+            icon="envelope-open-text"
+            navigateTo="M_Notices"
+            iconBackground="#ff4500"
+          />
         </View>
         <View style={{ flexDirection: "row", flex: 1 }}>
-          <Pressable
-            onPress={() => navigation.navigate("M_Complaints")}
-            style={styles.dashBoardItem}
-          >
-            <Icon name="exclamation" size={45} solid color="#393E46" />
-            <Text style={styles.dashBoardItem_text}>Resident Complaints</Text>
-          </Pressable>
-
-          <Pressable
-            onPress={() => navigation.navigate("M_Maintain_Requests")}
-            style={styles.dashBoardItem}
-          >
-            <Icon name="envelope-open-text" size={45} solid color="#393E46" />
-            <Text style={styles.dashBoardItem_text}>
-              Resident Maintenance Requests
-            </Text>
-          </Pressable>
+          <DashboardItem
+            text="Resident Complaints"
+            icon="exclamation"
+            navigateTo="M_Complaints"
+            iconBackground="#E0144C"
+          />
+          <DashboardItem
+            text="Maintenance Requests"
+            icon="tools"
+            navigateTo="M_Maintain_Requests"
+            iconBackground="#00ADB5"
+          />
         </View>
         <View style={{ flexDirection: "row", flex: 1 }}>
-          <Pressable
-            onPress={() => navigation.navigate("M_Bills")}
-            style={styles.dashBoardItem}
-          >
-            <Icon name="money-bill-wave" size={45} color="#393E46" />
-            <Text style={styles.dashBoardItem_text}>Resident Bills</Text>
-          </Pressable>
-
-          <Pressable
-            onPress={() => navigation.navigate("M_Login")}
-            style={styles.dashBoardItem}
-          >
-            <Icon name="sign-out-alt" size={45} solid color="#393E46" />
-            <Text style={styles.dashBoardItem_text}>Logout</Text>
-          </Pressable>
+          <DashboardItem
+            text="Logout"
+            icon="sign-out-alt"
+            navigateTo="M_Login"
+            iconBackground="#242424"
+          />
         </View>
       </View>
     </View>
@@ -91,8 +102,6 @@ const styles = StyleSheet.create({
   },
   topContainer: {
     flex: 1,
-    justifyContent: "flex-start",
-    backgroundColor: "#00ADB5",
     alignItems: "center",
   },
 
@@ -100,34 +109,29 @@ const styles = StyleSheet.create({
     flex: 1.8,
     justifyContent: "center",
     flexDirection: "column",
-  },
-  heading: {
-    margin: 12,
-    fontSize: 20,
-    fontWeight: "bold",
-    textAlign: "center",
-    color: "#eeeeee",
+    paddingRight: 6,
+    paddingLeft: 8,
   },
   headingSmall: {
     fontSize: 26,
     fontWeight: "bold",
-    color: "#222831",
-    marginBottom: 14,
+    marginBottom: 18,
+    marginTop: 8,
   },
   dashBoardItem: {
     flex: 1,
-    flexDirection: "column",
-    borderBottomWidth: 1,
-    borderRightWidth: 1,
-    backgroundColor: "#eeeeee",
     alignItems: "center",
+    margin: 10,
     justifyContent: "center",
-    padding: 24,
+    borderRadius: 10,
+    padding: 20,
+    shadowColor: "#000",
+    shadowRadius: 4.65,
+    elevation: 6,
   },
   dashBoardItem_text: {
-    marginTop: 12,
+    marginTop: 8,
     fontSize: 14,
     textAlign: "center",
-    color: "#393E46",
   },
 });

@@ -4,19 +4,24 @@ import {
   View,
   StyleSheet,
   Image,
-  TextInput,
   ScrollView,
-  Pressable,
 } from "react-native";
-import Icon from "react-native-vector-icons/FontAwesome5";
 import CustomButton from "../../components/button";
+import { useTheme } from "@react-navigation/native";
+import HeadingView from "../../components/headingView";
 
 function ViewBox(props) {
+  const { colors } = useTheme();
   return (
-    <View style={styles.viewbox}>
+    <View style={[styles.viewbox, { backgroundColor: colors.card }]}>
       <Image style={styles.img} source={props.img} />
       <View style={styles.viewboxContent}>
-        <Text style={[styles.text, { fontWeight: "bold", fontSize: 16 }]}>
+        <Text
+          style={[
+            styles.text,
+            { fontWeight: "bold", fontSize: 16, color: colors.text },
+          ]}
+        >
           {props.title}
         </Text>
       </View>
@@ -25,12 +30,26 @@ function ViewBox(props) {
 }
 
 export default function M_All_Bills() {
+  // async function selectImage() {
+  //   try {
+  //     console.log("in select Image");
+  //     const res = await DocumentPicker.pick({
+  //       type: [DocumentPicker.types.images],
+  //     });
+  //     console.log(res);
+  //     const absolutePath = await RNFetchBlob.fs.realpath(res.uri);
+  //   } catch (err) {
+  //     if (DocumentPicker.isCancel(err)) {
+  //       console.log("Cancelled");
+  //     } else {
+  //       console.log("Other error: ", err);
+  //     }
+  //   }
+  // }
+
   return (
     <View style={styles.mainContainer}>
-      <View style={styles.topContainer}>
-        <Icon name="money-bill-wave" size={32} solid color="#eeeeee" />
-        <Text style={styles.heading}>Resident Bills</Text>
-      </View>
+      <HeadingView text="Resident Bills" icon="money-bill-wave" />
 
       <ScrollView style={styles.viewboxContainer}>
         <ViewBox
@@ -55,6 +74,7 @@ export default function M_All_Bills() {
           marginHorizontal: 50,
           marginBottom: 60,
         }}
+        func={selectImage}
       />
     </View>
   );
@@ -62,25 +82,10 @@ export default function M_All_Bills() {
 
 const styles = StyleSheet.create({
   mainContainer: {
-    justifyContent: "center",
-    backgroundColor: "#e9e9e9",
     flex: 1,
+    paddingHorizontal: 20,
     // paddingTop: Constants.statusBarHeight,
   },
-  topContainer: {
-    backgroundColor: "#00ADB5",
-    alignItems: "center",
-    paddingTop: 30,
-    paddingBottom: 15,
-    flexDirection: "row",
-    justifyContent: "center",
-  },
-  heading: {
-    fontSize: 30,
-    color: "#eeeeee",
-    marginLeft: 10,
-  },
-
   viewboxContainer: {
     paddingTop: 5,
     paddingHorizontal: 10,
@@ -92,7 +97,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 5,
     paddingVertical: 5,
     marginBottom: 10,
-    backgroundColor: "#ffffff",
   },
   viewboxContent: {
     marginLeft: 20,

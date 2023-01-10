@@ -8,12 +8,13 @@ import InputContainer from "../../components/inputContainer";
 import firebase from "firebase/compat/app";
 import "firebase/compat/firestore";
 
-export default function M_Notices_General_New() {
+export default function M_Notices_Specific_New({ navigation }) {
+  const [cnic, setCnic] = useState("");
+  const [notice, setNotice] = useState("");
   const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
 
-  function AddGeneralNotice() {
-    console.log("Notices Enter");
+  function Signup() {
+    console.log("Signup Enter");
     const firestore = firebase.firestore();
 
     // STORE USER DATA INTO CLOUD FIRESTORE
@@ -21,54 +22,47 @@ export default function M_Notices_General_New() {
       .collection("notices")
       .add({
         title: title,
-        description: description,
-        category: "general",
-
+        description: notice,
+        category: "specific",
+        cnic: cnic,
       })
       .then((docRef) => {
         console.log("Document written with ID: ", docRef.id);
+        navigation.navigate('M_Notices_Specific');
       })
       .catch((error) => {
         console.error("Error adding document: ", error);
       });
-    firestore
-      .collection("notices")
-      .get()
-      .then((snapshot) => {
-        snapshot.forEach((doc) => {
-          console.log(doc.id, "=>", doc.data().title);
-        });
-      })
-      .catch((error) => {
-        console.log("Error getting documents:", error);
-      });
+
   }
   return (
     <View style={styles.mainContainer}>
       <HeadingView
-        text="Send General Notice"
-        icon="users"
+        text="Send Specific Notice"
+        icon="exclamation-triangle"
         viewStyle={{ marginBottom: 30 }}
       />
       <View style={styles.topContainer}>
         <SvgImage width={220} height={160} />
       </View>
       <View style={styles.midContainer}>
+        <InputContainer text="CNIC" value={cnic} setValue={setCnic} />
+
         <InputContainer text="Title" value={title} setValue={setTitle} />
         <InputContainer
           text="Description"
           multiline={true}
           inputStyle={{ height: 100 }}
-          value={description} setValue={setDescription}
+          value={notice} setValue={setNotice}
         />
         <CustomButton
-          text="Send General Notice"
+          text="Send Notice"
           icon="paper-plane"
           style={{
             marginTop: 0,
             marginHorizontal: 20,
           }}
-          func={AddGeneralNotice}
+          func={Signup}
         />
       </View>
     </View>

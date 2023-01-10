@@ -1,101 +1,125 @@
 // import { StatusBar } from "expo-status-bar";
 import {
-    Text,
-    View,
-    StyleSheet,
-    Image,
-    TextInput,
-    ScrollView,
-    Pressable,
+  View,
+  StyleSheet,
 } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome5";
+import HeadingView from "../../components/headingView";
+import SvgImage from "../../assets/Complaint.svg";
+import InputContainer from "../../components/inputContainer2";
 import CustomButton from "../../components/button";
+import { useEffect, useState, } from "react";
+import firebase from "firebase/compat/app";
+import "firebase/compat/firestore";
 
-export default function M_Compliants_Info() {
-    return (
-        <View>
-            <View style={styles.topContainer}>
-                <Icon name="users" size={32} solid color="#eeeeee" />
-                <Text style={styles.heading}>Complaints Information</Text>
-            </View>
 
-            <View style={styles.midContainer}>
-                <View style={styles.inputContainer}>
-                    <Text style={styles.text}>Complaints Title: </Text>
-                    <TextInput style={styles.input} />
-                </View>
+export default function M_Complaints_Info({ navigation, route }) {
+  const [response, setResponse] = useState("");
+  const [complaints, setComplaints] = useState();
+  const firestore = firebase.firestore();
 
-                <View style={styles.inputContainer}>
-                    <Text style={styles.text}>Resident Name: </Text>
-                    <TextInput style={styles.input} />
-                </View>
+  useEffect(() => {
 
-                <View style={styles.inputContainer}>
-                    <Text style={styles.text}>Complaints Description: </Text>
-                    <TextInput multiline={true} style={[styles.input, { height: 80 }]} />
-                </View>
+    firestore.collection("complaints").doc(route.params.id).get().then((doc) => {
+      setComplaints(doc.data());
+      console.log(doc.data());
+      if (doc.data().response) {
+        setResponse(doc.data().response)
+      }
+    })
+  }, [])
 
-                <View style={styles.inputContainer}>
-                    <Text style={styles.text}>Complaints Response: </Text>
-                    <TextInput multiline={true} style={[styles.input, { height: 100 }]} />
-                </View>
-
-                <CustomButton
-                    text="Send Response"
-                    icon="paper-plane"
-                    style={{
-                        paddingVertical: 22,
-                        paddingHorizontal: 42,
-                        marginTop: 56,
-                        borderRadius: 50,
-                    }}
-                />
-            </View>
+  function sendData() {
+    console.log("Signup Enter");
+    console.log(route.params.id);
+    // STORE USER DATA INTO CLOUD FIRESTORE
+    firestore
+      .collection("complaints")
+      .doc(route.params.id)
+      .set({
+        title: complaints.title,
+        description: complaints.description,
+        cnic: complaints.cnic,
+        response: response,
+        category: complaints.category,
+      })
+      .then(() => {
+        navigation.navigate('M_Complaints');
+      })
+      .catch((error) => {
+        console.error("Error adding document: ", error);
+      });
+  }
+  return (
+    <View style={styles.mainContainer}>
+      <HeadingView text="Complaint Info" icon="envelope-open-text" />
+      <View style={styles.topContainer}>
+        <SvgImage width={220} height={160} />
+      </View>
+      {complaints &&
+        <View style={styles.midContainer}>
+          <InputContainer text="Title" value={route.params.title} disabled={true}
+            editable={false} />
+          <InputContainer
+            text="Description"
+            multiline={true}
+            inputStyle={{ height: 75 }}
+            value={route.params.description}
+            editable={false}
+          />
+          <InputContainer
+            text="Response"
+            multiline={true}
+            inputStyle={{ height: 75 }}
+            value={response}
+            setValue={setResponse}
+          />
         </View>
-    );
+      }
+      <CustomButton
+        text="Send Response"
+        icon="paper-plane"
+        style={{
+          marginTop: 0,
+          marginHorizontal: 20,
+        }}
+        func={sendData}
+      />
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({
-    topContainer: {
-        backgroundColor: "#00ADB5",
-        alignItems: "center",
-        paddingTop: 30,
-        paddingBottom: 25,
-        flexDirection: "row",
-        justifyContent: "center",
-    },
-    heading: {
-        fontSize: 30,
-        color: "#eeeeee",
-        marginLeft: 10,
-    },
-    input: {
-        backgroundColor: "#fff",
-        marginTop: 4,
-        marginBottom: 10,
-        borderRadius: 6,
-        paddingVertical: 8,
-        paddingHorizontal: 14,
-        borderWidth: 2,
-        borderColor: "#eaeaea",
-        fontSize: 18,
-        letterSpacing: 1,
-        width: 250,
-    },
+  mainContainer: {
+    flex: 1,
+    paddingHorizontal: 20,
+  },
+  topContainer: {
+    alignItems: "center",
+  },
+  input: {
+    backgroundColor: "#fff",
+    marginTop: 6,
+    marginBottom: 10,
+    paddingVertical: 8,
+    paddingHorizontal: 14,
+    fontSize: 13,
+    letterSpacing: 1,
+    borderRadius: 5,
+    borderWidth: 1,
+    borderColor: "#ebebeb",
+  },
 
-    midContainer: {
-        alignItems: "center",
-        padding: 30,
-    },
-
-    text: {
-        fontSize: 20,
-    },
-
-    inputContainer: {
-        alignItems: "flex-start",
-        alignSelf: "flex-start",
-        paddingHorizontal: 40,
-        paddingTop: 20,
-    },
+  midContainer: {
+    paddingTop: 30,
+    paddingHorizontal: 6,
+  },
+  text: {
+    fontSize: 16,
+    marginLeft: 10,
+    fontWeight: "bold",
+  },
+  inputContainer: {
+    marginBottom: 20,
+  },
 });

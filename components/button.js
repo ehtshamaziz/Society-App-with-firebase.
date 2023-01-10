@@ -1,10 +1,11 @@
-import { StyleSheet, Text, View, Pressable } from 'react-native'
+import { StyleSheet, Text, Pressable } from 'react-native'
 import React from 'react'
 import Icon from "react-native-vector-icons/FontAwesome5";
-
+import { useTheme } from "@react-navigation/native";
 export default function CustomButton(props) {
+  const { colors } = useTheme();
   return (
-    <Pressable style={[styles.button, props.style]} onPress={props.func}>
+    <Pressable style={[styles.button, {backgroundColor: colors.primary}, props.style]} onPress={props.func}>
       
       {props.icon !== undefined && (
         <Icon
@@ -12,14 +13,14 @@ export default function CustomButton(props) {
           size={20}
           solid
           color="#eeeeee"
-          style={{ marginRight: 8 }}
+          style={{ marginRight: 10 }}
         />
       )}
 
       <Text
         style={[
           {
-            fontSize: 18,
+            fontSize: 16,
             color: "#EEEEEE",
             textAlign: "center",
           },
@@ -35,11 +36,11 @@ export default function CustomButton(props) {
 const styles = StyleSheet.create({
   button: {
     flexDirection: "row",
-    backgroundColor: "#00ADB5",
-    paddingVertical: 12,
-    paddingHorizontal: 24,
+    paddingVertical: 14,
+    paddingHorizontal: 28,
     borderRadius: 30,
     alignItems: "center", 
     justifyContent: "center",
+    marginVertical: 5,
   },
 });

@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import {
   Text,
   View,
@@ -8,65 +9,108 @@ import {
   Pressable,
 } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome5";
+import HeadingView from "../../components/headingView";
+import SvgImage from "../../assets/Notice.svg";
+import { useTheme } from "@react-navigation/native";
+import firebase from "firebase/compat/app";
+import "firebase/compat/firestore";
 
-export default function M_Notices({navigation}) {
+export default function M_Notices({ navigation }) {
+
+  const [specific, setSpecific] = useState("");
+  const [general, setGeneral] = useState("");
+  useEffect(() => {
+    console.log("Complaints Enter");
+    const firestore = firebase.firestore();
+    // STORE USER DATA INTO CLOUD FIRESTORE
+    firestore
+      .collection("notices")
+      .where("category", "==", "general")
+      .get()
+      .then((doc) => {
+        setGeneral(doc.size)
+      })
+      .catch((error) => {
+        console.log("Error getting documents:", error);
+      });
+
+    firestore
+      .collection("notices")
+      .where("category", "==", "specific")
+      .get()
+      .then((doc) => {
+        setSpecific(doc.size)
+      })
+      .catch((error) => {
+        console.log("Error getting documents:", error);
+      });
+  })
+
+
+  const { colors } = useTheme();
   return (
-    <View>
+    <View style={styles.mainContainer}>
+      <HeadingView text="Notices" icon="envelope-open-text" />
       <View style={styles.topContainer}>
-        <Icon name="sticky-note" size={32} solid color="#eeeeee" />
-        <Text style={styles.heading}>Notices</Text>
+        <SvgImage width={220} height={160} />
       </View>
-
       <View style={styles.viewboxContainer}>
-        <Text style={styles.smallheading}>Notices: </Text>
-
-        <Pressable onPress={() => navigation.navigate("M_Notices_Specific")}>
-          <View style={styles.viewbox}>
+        <Pressable
+          style={[styles.viewbox, { backgroundColor: colors.card }]}
+          onPress={() => navigation.navigate("M_Notices_Specific")}
+        >
+          <View style={{ flexDirection: "row" }}>
             <Icon
               name="exclamation-triangle"
-              size={30}
+              size={26}
               solid
-              color="#00ADB5"
-              style={{ marginHorizontal: 2 }}
+              color={colors.primary}
             />
             <View style={styles.viewboxContent}>
-              <Text style={styles.contentText}>Specific</Text>
+              <Text style={[styles.contentText, { color: colors.text }]}>Specific</Text>
             </View>
           </View>
+          <Icon name="arrow-right" size={20} solid color="#a6a6a6" />
         </Pressable>
 
-        <Pressable onPress={() => navigation.navigate("M_Notices_General")}>
-          <View style={styles.viewbox}>
-            <Icon name="users" size={30} solid color="#00ADB5" />
+        <Pressable
+          style={[styles.viewbox, { backgroundColor: colors.card }]}
+          onPress={() => navigation.navigate("M_Notices_General")}
+        >
+          <View style={{ flexDirection: "row" }}>
+            <Icon name="users" size={26} solid color={colors.primary} />
             <View style={styles.viewboxContent}>
-              <Text style={styles.contentText}>General</Text>
+              <Text style={[styles.contentText, { color: colors.text }]}>General</Text>
             </View>
           </View>
+          <Icon name="arrow-right" size={20} solid color="#a6a6a6" />
         </Pressable>
 
-        <Text style={[styles.smallheading, { marginTop: 60 }]}>
-          Notices Summary
-        </Text>
+        <Text style={[styles.smallheading, { color: colors.text, borderBottomColor: colors.border }]}>Notices Summary</Text>
         <View style={styles.bigview}>
-          <View style={styles.viewbox2}>
+          <View style={[styles.viewbox2, { backgroundColor: colors.card }]}>
             <Icon
               name="exclamation-triangle"
-              size={40}
+              size={32}
               solid
-              color="#00ADB5"
+              color={colors.primary}
               style={{ marginHorizontal: 2 }}
             />
 
             <View style={styles.viewbox2Content}>
-              <Text style={{ fontSize: 20 }}>Specific</Text>
-              <Text style={{ fontSize: 16, marginTop: 6 }}>32</Text>
+              <Text style={[styles.contentText, { color: colors.text }]}>Specific</Text>
+              <Text style={{ fontSize: 16, marginTop: 6, color: "#a6a6a6" }}>
+                {specific}
+              </Text>
             </View>
           </View>
-          <View style={styles.viewbox2}>
-            <Icon name="users" size={40} solid color="#00ADB5" />
+          <View style={[styles.viewbox2, { backgroundColor: colors.card }]}>
+            <Icon name="users" size={32} solid color={colors.primary} />
             <View style={styles.viewbox2Content}>
-              <Text style={{ fontSize: 20 }}>General</Text>
-              <Text style={{ fontSize: 16, marginTop: 6 }}>4</Text>
+              <Text style={[styles.contentText, { color: colors.text }]}>General</Text>
+              <Text style={{ fontSize: 16, marginTop: 6, color: "#a6a6a6" }}>
+                {general}
+              </Text>
             </View>
           </View>
         </View>
@@ -76,64 +120,64 @@ export default function M_Notices({navigation}) {
 }
 
 const styles = StyleSheet.create({
-  contentText: {
-    justifyContent: "center",
-    fontSize: 22,
+  mainContainer: {
+    flex: 1,
+    paddingHorizontal: 20,
   },
   topContainer: {
-    backgroundColor: "#00ADB5",
     alignItems: "center",
-    paddingTop: 30,
-    paddingBottom: 25,
-    flexDirection: "row",
-    justifyContent: "center",
-  },
-  heading: {
-    fontSize: 30,
-    color: "#eeeeee",
-    marginLeft: 10,
-  },
-  smallheading: {
-    padding: 10,
-    fontSize: 25,
-    marginTop: 20,
-    marginBottom: 10,
   },
   viewboxContainer: {
-    paddingVertical: 15,
-    paddingHorizontal: 16,
+    padding: 10,
+  },
+  smallheading: {
+    fontSize: 22,
+    marginTop: 40,
+    marginBottom: 10,
+    marginLeft: 10,
+    paddingBottom: 10,
+    borderBottomWidth: 1,
   },
   viewbox: {
     borderRadius: 10,
     flexDirection: "row",
     alignItems: "center",
-    paddingHorizontal: 34,
+    justifyContent: "space-between",
+    paddingHorizontal: 24,
     paddingVertical: 20,
-    backgroundColor: "#fff",
     marginTop: 10,
+    shadowColor: "#000",
+    shadowRadius: 4.65,
+    elevation: 6,
+  },
+  contentText: {
+    justifyContent: "center",
+    fontSize: 18,
+    color: "#404040",
   },
   bigview: {
-    justifyContent: "space-between",
     flexDirection: "row",
+    justifyContent: "space-between",
     paddingHorizontal: 10,
     paddingVertical: 5,
-    marginBottom: 5,
   },
   viewboxContent: {
-    marginLeft: 20,
+    marginLeft: 15,
   },
 
   viewbox2: {
     borderRadius: 10,
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-between",
-    paddingHorizontal: 16,
-    paddingVertical: 40,
+    paddingHorizontal: 14,
+    paddingVertical: 30,
     backgroundColor: "#ffffff",
+    shadowColor: "#000",
+    shadowRadius: 4.65,
+    elevation: 6,
   },
   viewbox2Content: {
-    marginLeft: 12,
+    marginLeft: 8,
     alignItems: "center",
   },
 });

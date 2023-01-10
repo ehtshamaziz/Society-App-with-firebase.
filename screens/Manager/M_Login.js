@@ -1,3 +1,4 @@
+import React, { useState, useEffect } from "react";
 import {
   Text,
   View,
@@ -5,11 +6,21 @@ import {
   TextInput,
   Pressable,
   Image,
-  StatusBar
+  StatusBar,
 } from "react-native";
-import Constants from "expo-constants";
+// import Constants from "expo-constants";
+import CustomButton from "../../components/button";
 
 export default function M_Login({ navigation }) {
+  const [id, setId] = useState("");
+  const [password, setIsPassword] = useState("");
+
+  function Login() {
+    if (id == 'admin' && password == 'admin') {
+      navigation.navigate('Manager');
+    }
+  }
+
   return (
     <View style={styles.mainContainer}>
       <StatusBar backgroundColor="#222831" barStyle="light-content" />
@@ -21,22 +32,20 @@ export default function M_Login({ navigation }) {
           }}
         />
         <Text style={styles.heading}>Society Management System</Text>
-        <Text style={[styles.heading, { fontSize: 22, color: "#27496D" }]}>
+        <Text style={[styles.heading, { fontSize: 20, color: "#27496D" }]}>
           Manager Login
         </Text>
       </View>
 
       <View style={styles.bottomContainer}>
-        <TextInput placeholder="Name" style={styles.inputs} />
-        <TextInput placeholder="Password" style={styles.inputs} />
-        <Pressable
-          style={styles.button}
-          onPress={() => navigation.navigate("M_Dashboard")}
-        >
-          <Text style={{ fontSize: 18, color: "#EEEEEE", textAlign: "center" }}>
-            Login
-          </Text>
-        </Pressable>
+        <TextInput placeholder="Name" style={styles.inputs}
+          value={id} onChangeText={setId} />
+        <TextInput placeholder="Password" style={styles.inputs}
+          value={password} onChangeText={setIsPassword} />
+        <CustomButton
+          text="Login"
+          func={Login}
+        />
       </View>
     </View>
   );
@@ -56,7 +65,7 @@ const styles = StyleSheet.create({
     borderBottomLeftRadius: 200,
     borderBottomRightRadius: 200,
     backgroundColor: "#00ADB5",
-    padding: 10,
+    padding: 25,
     alignItems: "center",
   },
 
@@ -67,13 +76,13 @@ const styles = StyleSheet.create({
   },
   heading: {
     margin: 20,
-    fontSize: 28,
+    fontSize: 24,
     fontWeight: "bold",
     textAlign: "center",
     color: "#eeeeee",
   },
   inputs: {
-    fontSize: 16,
+    fontSize: 14,
     paddingVertical: 12,
     paddingHorizontal: 24,
     borderRadius: 30,
@@ -83,7 +92,6 @@ const styles = StyleSheet.create({
   },
   button: {
     backgroundColor: "#00ADB5",
-
     paddingVertical: 12,
     paddingHorizontal: 24,
     marginHorizontal: 5,

@@ -1,43 +1,52 @@
 // import { StatusBar } from "expo-status-bar";
-import {
-  Text,
-  View,
-  StyleSheet,
-  Image,
-  TextInput,
-  ScrollView,
-  Pressable,
-} from "react-native";
+import { Text, View, StyleSheet, TextInput } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome5";
 import CustomButton from "../../components/button";
+import HeadingView from "../../components/headingView";
+import SvgImage from "../../assets/Add.svg";
 
 export default function R_Complaints_New() {
   return (
-    <View>
+    <View style={styles.mainContainer}>
+      <HeadingView
+        text="Add Complaint"
+        icon="envelope-open-text"
+        viewStyle={{ marginBottom: 30 }}
+      />
       <View style={styles.topContainer}>
-        <Icon name="exclamation-circle" size={32} solid color="#eeeeee" />
-        <Text style={styles.heading}>Add Complaints</Text>
+        <SvgImage width={220} height={160} />
       </View>
-
       <View style={styles.midContainer}>
         <View style={styles.inputContainer}>
           <Text style={styles.text}>Complaint Title: </Text>
-          <TextInput style={styles.input} />
+          <TextInput
+            style={styles.input}
+            placeholder="Enter Complaint Title..."
+          />
+        </View>
+        <View style={styles.inputContainer}>
+          <Text style={styles.text}>Category: </Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Enter Complaint Category..."
+          />
         </View>
 
         <View style={styles.inputContainer}>
           <Text style={styles.text}>Complaint Description: </Text>
-          <TextInput multiline={true} style={[styles.input, { height: 100 }]} />
+          <TextInput
+            multiline={true}
+            style={[styles.input, { height: 100 }]}
+            placeholder="Enter Complaint Description..."
+          />
         </View>
 
         <CustomButton
           text="Add Complaint"
           icon="plus"
           style={{
-            paddingVertical: 22,
-            paddingHorizontal: 42,
-            marginTop: 56,
-            borderRadius: 50,
+            marginTop: 0,
+            marginHorizontal: 20,
           }}
         />
       </View>
@@ -46,46 +55,36 @@ export default function R_Complaints_New() {
 }
 
 const styles = StyleSheet.create({
-  topContainer: {
-    backgroundColor: "#00ADB5",
-    alignItems: "center",
-    paddingTop: 30,
-    paddingBottom: 25,
-    flexDirection: "row",
-    justifyContent: "center",
+  mainContainer: {
+    flex: 1,
+    paddingHorizontal: 20,
   },
-  heading: {
-    fontSize: 30,
-    color: "#eeeeee",
-    marginLeft: 10,
+  topContainer: {
+    alignItems: "center",
   },
   input: {
     backgroundColor: "#fff",
-    marginTop: 4,
-    marginBottom: 10,
-    borderRadius: 6,
+    marginTop: 6,
+    marginBottom: 4,
     paddingVertical: 8,
     paddingHorizontal: 14,
-    borderWidth: 2,
-    borderColor: "#eaeaea",
-    fontSize: 18,
+    fontSize: 13,
     letterSpacing: 1,
-    width: 250,
+    borderRadius: 5,
+    borderWidth: 1,
+    borderColor: "#ebebeb",
   },
 
   midContainer: {
-    alignItems: "center",
-    padding: 30,
+    paddingTop: 25,
+    paddingHorizontal: 6,
   },
-
   text: {
-    fontSize: 20,
+    fontSize: 16,
+    marginLeft: 10,
+    fontWeight: "bold",
   },
-
   inputContainer: {
-    alignItems: "flex-start",
-    alignSelf: "flex-start",
-    paddingHorizontal: 40,
-    paddingTop: 20,
+    marginBottom: 20,
   },
 });

@@ -10,14 +10,12 @@ import {
 } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome5";
 import CustomButton from "../../components/button";
+import HeadingView from "../../components/headingView";
 
 export default function M_All_Bills() {
   return (
     <View style={styles.mainContainer}>
-      <View style={styles.topContainer}>
-        <Icon name="money-bill-wave" size={32} solid color="#eeeeee" />
-        <Text style={styles.heading}>Society Bills</Text>
-      </View>
+      <HeadingView text="Society Bills" icon="money-bill-wave" />
       <View style={styles.imgContainer}>
         <Image
           style={styles.img}
@@ -41,27 +39,12 @@ export default function M_All_Bills() {
 
 const styles = StyleSheet.create({
   mainContainer: {
-    justifyContent: "center",
-    backgroundColor: "#e9e9e9",
     flex: 1,
-    justifyContent: "space-between",
-  },
-  topContainer: {
-    backgroundColor: "#00ADB5",
-    alignItems: "center",
-    paddingTop: 30,
-    paddingBottom: 15,
-    flexDirection: "row",
-    justifyContent: "center",
-  },
-  heading: {
-    fontSize: 30,
-    color: "#eeeeee",
-    marginLeft: 10,
+    paddingHorizontal: 20
   },
   imgContainer: {
     alignItems: "center",
-    marginBottom: 50,
+    marginVertical: 40,
   },
   img: {
     width: 350,

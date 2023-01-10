@@ -1,3 +1,4 @@
+import React, { useState, useEffect } from "react";
 import {
   Text,
   View,
@@ -5,11 +6,55 @@ import {
   TextInput,
   Pressable,
   Image,
-  StatusBar
+  StatusBar,
 } from "react-native";
-import Constants from "expo-constants";
+// import Constants from "expo-constants";
+import CustomButton from "../../components/button";
+import firebase from "firebase/compat/app";
+import "firebase/compat/firestore";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function R_Login({ navigation }) {
+  const [cnic, setCnic] = useState("");
+  const [password, setIsPassword] = useState("");
+
+
+  function Login() {
+    async function storing(user) {
+      try {
+        await AsyncStorage.setItem(
+          'user',
+          JSON.stringify(user)
+        );
+        console.log(user);
+
+      } catch (error) {
+        // Error saving data
+      }
+    }
+    console.log("Login Enter");
+    const firestore = firebase.firestore();
+
+    // STORE USER DATA INTO CLOUD FIRESTORE
+
+    // GET ALL DOCUMENTS FROM CLOUD FIRESTORE
+
+    firestore
+      .collection("users")
+      .where('cnic', '==', cnic).where('password', '==', password).get()
+      .then((snapshot) => {
+        snapshot.forEach((doc) => {
+          const user = doc.data();
+          console.log(user);
+          storing(user);
+          navigation.navigate('Resident');
+        });
+      })
+      .catch((error) => {
+        console.log("Error getting documents:", error);
+      });
+  }
+
   return (
     <View style={styles.mainContainer}>
       <StatusBar backgroundColor="#00ADB5" barStyle="default" />
@@ -21,22 +66,28 @@ export default function R_Login({ navigation }) {
           }}
         />
         <Text style={styles.heading}>Society Management System</Text>
-        <Text style={[styles.heading, { fontSize: 22, color: "#27496D" }]}>
+        <Text style={[styles.heading, { fontSize: 20, color: "#27496D" }]}>
           Resident Login
         </Text>
       </View>
 
       <View style={styles.bottomContainer}>
-        <TextInput placeholder="Id" style={styles.inputs} />
-        <TextInput placeholder="Password" style={styles.inputs} />
-        <Pressable
-          style={styles.button}
-          onPress={() => navigation.navigate("R_Dashboard")}
-        >
-          <Text style={{ fontSize: 18, color: "#EEEEEE", textAlign: "center" }}>
-            Login
-          </Text>
-        </Pressable>
+        <TextInput
+          placeholder="Id"
+          style={styles.inputs}
+          value={cnic}
+          onChangeText={setCnic}
+        />
+        <TextInput
+          placeholder="Password"
+          style={styles.inputs}
+          value={password}
+          onChangeText={setIsPassword}
+        />
+        <CustomButton
+          text="Login"
+          func={Login}
+        />
       </View>
     </View>
   );
@@ -56,7 +107,7 @@ const styles = StyleSheet.create({
     borderBottomLeftRadius: 200,
     borderBottomRightRadius: 200,
     backgroundColor: "#00ADB5",
-    padding: 10,
+    padding: 25,
     alignItems: "center",
   },
 
@@ -67,13 +118,13 @@ const styles = StyleSheet.create({
   },
   heading: {
     margin: 20,
-    fontSize: 28,
+    fontSize: 24,
     fontWeight: "bold",
     textAlign: "center",
     color: "#eeeeee",
   },
   inputs: {
-    fontSize: 16,
+    fontSize: 14,
     paddingVertical: 12,
     paddingHorizontal: 24,
     borderRadius: 30,

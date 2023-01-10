@@ -11,16 +11,31 @@ import {
 import Icon from "react-native-vector-icons/FontAwesome5";
 import CustomButton from "../../components/button";
 // import Constants from "expo-constants";
+import HeadingView from "../../components/headingView";
+import { useTheme } from "@react-navigation/native";
 
 function ViewBox(props) {
+  const { colors } = useTheme();
   return (
     <Pressable onPress={props.func}>
-      <View style={styles.viewbox}>
+      <View style={[styles.viewbox, { backgroundColor: colors.card }]}>
         <Image style={styles.img} source={props.img} />
         <View style={styles.viewboxContent}>
-          <Text style={styles.text}>{props.name}</Text>
-          <Text style={styles.text}> Plot#{props.plot}</Text>
-          <Text style={[styles.text, {fontWeight: "bold", fontSize: 16}]}>Unpaid: {props.billTitle}</Text>
+          <Text style={[styles.text, { color: colors.text }]}>
+            {props.name}
+          </Text>
+          <Text style={[styles.text, { color: colors.primary }]}>
+            {" "}
+            Plot#{props.plot}
+          </Text>
+          <Text
+            style={[
+              styles.text,
+              { fontWeight: "bold", fontSize: 16, color: colors.text },
+            ]}
+          >
+            Unpaid: {props.billTitle}
+          </Text>
         </View>
       </View>
     </Pressable>
@@ -28,13 +43,9 @@ function ViewBox(props) {
 }
 
 export default function M_Resident({ navigation }) {
-
   return (
     <View style={styles.mainContainer}>
-      <View style={styles.topContainer}>
-        <Icon name="users" size={32} solid color="#eeeeee" />
-        <Text style={styles.heading}>Unpaid Bills</Text>
-      </View>
+      <HeadingView text="Unpaid Bills" icon="money-bill-wave" />
 
       <ScrollView>
         <View style={styles.viewboxContainer}>
@@ -81,11 +92,8 @@ export default function M_Resident({ navigation }) {
         icon="money-bill"
         style={{
           paddingVertical: 16,
-          paddingHorizontal: 28,
-          borderRadius: 50,
-          marginHorizontal: 50,
-          marginBottom: 120,
-          marginTop: 10,
+          marginHorizontal: 30,
+          marginVertical: 15,
         }}
         func={() => navigation.navigate("M_All_Bills")}
       />
@@ -95,24 +103,10 @@ export default function M_Resident({ navigation }) {
 
 const styles = StyleSheet.create({
   mainContainer: {
-    justifyContent: "center",
-  },
-  topContainer: {
-    backgroundColor: "#00ADB5",
-    alignItems: "center",
-    paddingTop: 30,
-    paddingBottom: 25,
-    flexDirection: "row",
-    justifyContent: "center",
-  },
-  heading: {
-    fontSize: 30,
-    color: "#eeeeee",
-    marginLeft: 10,
+    flex: 1,
+    paddingHorizontal: 20,
   },
   viewboxContainer: {
-    paddingHorizontal: 10,
-    backgroundColor: "#e9e9e9",
     paddingTop: 5,
   },
   viewbox: {
@@ -122,7 +116,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 25,
     paddingVertical: 5,
     marginBottom: 7,
-    backgroundColor: "#ffffff",
+    marginHorizontal: 10,
   },
   viewboxContent: {
     marginLeft: 20,

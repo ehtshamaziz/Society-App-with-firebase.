@@ -10,51 +10,79 @@ import {
 } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome5";
 import CustomButton from "../../components/button";
+import HeadingView from "../../components/headingView";
+import FloatingButton from "../../components/floatingButton";
+import { useTheme } from "@react-navigation/native";
+import firebase from "firebase/compat/app";
+import "firebase/compat/firestore";
+import { useState, useEffect } from "react";
 
 function ViewBox(props) {
+  const { colors } = useTheme();
   return (
-    <View style={styles.viewbox}>
-      <View style={styles.viewboxContent}>
-        <Text style={[styles.text, { fontWeight: "bold", fontSize: 16 }]}>
+    <View style={[styles.viewbox, { backgroundColor: colors.card }]}>
+      <View style={styles.viewboxContent} >
+        <Text style={[styles.text, { fontWeight: "bold", fontSize: 14, color: colors.text }]}>
           {props.title}
         </Text>
-        <Text style={styles.text}>{props.text}</Text>
+        <Text style={[styles.text, { color: "#a6a6a6" }]}>{props.text}</Text>
       </View>
+      <Pressable onPress={props.func} style={{ flex: 1, alignItems: 'flex-end' }}>
+        <Icon name="trash-alt" size={34} solid color="red" />
+      </Pressable>
     </View>
   );
 }
 
-export default function M_Notices_Specific({navigation}) {
+export default function M_Notices_General({ navigation }) {
+  const [ti, setTi] = useState([]);
+  const [desc, setDesc] = useState([]);
+  const [data, setData] = useState([]);
+
+  console.log("Notices General Enter");
+  const firestore = firebase.firestore();
+  useEffect(async () => {
+    firestore
+      .collection("notices")
+      .where("category", "==", "general")
+      .get()
+      .then((snapshot) => {
+        const dataas = []
+        snapshot.forEach((doc) => {
+          dataas.push({
+            title: doc.data().title,
+            description: doc.data().description,
+            category: doc.data().category
+          })
+          console.log(doc.id, "=>", doc.data().title);
+        }
+        );
+        setData(dataas)
+      })
+      .catch((error) => {
+        console.log("Error getting documents:", error);
+      });
+  }, [])
+
   return (
     <View style={styles.mainContainer}>
-      <View style={styles.topContainer}>
-        <Icon name="users" size={32} solid color="#eeeeee" />
-        <Text style={styles.heading}>General Notices</Text>
-      </View>
+      <HeadingView text="General Notices" icon="users" />
 
-      <ScrollView style={styles.viewboxContainer}>
-        <ViewBox
-          plot="69"
-          title="Unpaid Bill"
-          text="You have not paid the society bill for the previous 2 months. Please pay the bill before the end of this month or strict action will be taken against you"
-        />
-        <ViewBox
-          plot="32"
-          title="Warning for Street Littering"
-          text="You have been spotted many times littering in the streets. If you don't stop throwing garbage in the street strict action will be taken against you"
-        />
+      <ScrollView
+        style={styles.viewboxContainer}
+        showsVerticalScrollIndicator={false}
+      >
+        {data.map((item, index) => (
+          <ViewBox
+            plot={item.title}
+            title={item.category}
+            text={item.description}
+          />
+        ))}
+
       </ScrollView>
-
-      <CustomButton
-        text="Send New Notice"
-        icon="paper-plane"
-        style={{
-          paddingVertical: 16,
-          paddingHorizontal: 28,
-          borderRadius: 50,
-          marginHorizontal: 50,
-          marginBottom: 60,
-        }}
+      <FloatingButton
+        icon="plus"
         func={() => navigation.navigate("M_Notices_General_New")}
       />
     </View>
@@ -63,46 +91,31 @@ export default function M_Notices_Specific({navigation}) {
 
 const styles = StyleSheet.create({
   mainContainer: {
-    justifyContent: "center",
-    backgroundColor: "#e9e9e9",
     flex: 1,
-    // paddingTop: Constants.statusBarHeight,
+    paddingHorizontal: 20,
   },
-  topContainer: {
-    backgroundColor: "#00ADB5",
-    alignItems: "center",
-    paddingTop: 30,
-    paddingBottom: 15,
-    flexDirection: "row",
-    justifyContent: "center",
-  },
-  heading: {
-    fontSize: 30,
-    color: "#eeeeee",
-    marginLeft: 10,
-  },
-
   viewboxContainer: {
     paddingTop: 5,
-    paddingHorizontal: 10,
   },
   viewbox: {
     borderRadius: 10,
     flexDirection: "row",
     alignItems: "center",
-    paddingHorizontal: 30,
-    paddingVertical: 35,
+    paddingHorizontal: 25,
+    paddingVertical: 14,
     marginBottom: 10,
     backgroundColor: "#ffffff",
+    shadowColor: "#000",
+    shadowRadius: 4.65,
+    elevation: 4,
+    marginHorizontal: 6,
   },
   viewboxContent: {
-    marginLeft: 20,
+    marginLeft: 5,
+    flex: 5,
   },
   text: {
-    margin: 5,
-  },
-  img: {
-    width: 45,
-    height: 45,
+    margin: 4,
+    fontSize: 13,
   },
 });

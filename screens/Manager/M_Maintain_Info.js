@@ -1,4 +1,3 @@
-// import { StatusBar } from "expo-status-bar";
 import {
   Text,
   View,
@@ -10,29 +9,44 @@ import {
 } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome5";
 import HeadingView from "../../components/headingView";
-import SvgImage from "../../assets/Complaint.svg";
+import SvgImage from "../../assets/Maintenance.svg";
 import InputContainer from "../../components/inputContainer2";
+import CustomButton from "../../components/button";
+import { useEffect, useState, } from "react";
+import firebase from "firebase/compat/app";
+import "firebase/compat/firestore";
 
-export default function R_Complaints_Info() {
+export default function M_Maintain_Info({ route, navigation }) {
+
   return (
     <View style={styles.mainContainer}>
-      <HeadingView text="Complaint Info" icon="envelope-open-text" />
+      <HeadingView text="Maintenance Request Info" icon="tools" />
       <View style={styles.topContainer}>
         <SvgImage width={220} height={160} />
       </View>
       <View style={styles.midContainer}>
-        <InputContainer text="Title" />
+        <InputContainer text="Title" editable={false} value={route.params.title} />
         <InputContainer
           text="Description"
           multiline={true}
-          inputStyle={{ height: 100 }}
+          inputStyle={{ height: 75 }}
+          editable={false}
+          value={route.params.description}
         />
         <InputContainer
           text="Response"
           multiline={true}
-          inputStyle={{ height: 100 }}
+          inputStyle={{ height: 75 }}
         />
       </View>
+      <CustomButton
+        text="Send Response"
+        icon="paper-plane"
+        style={{
+          marginTop: 0,
+          marginHorizontal: 20,
+        }}
+      />
     </View>
   );
 }
@@ -59,7 +73,7 @@ const styles = StyleSheet.create({
   },
 
   midContainer: {
-    paddingTop: 20,
+    paddingTop: 30,
     paddingHorizontal: 6,
   },
   text: {

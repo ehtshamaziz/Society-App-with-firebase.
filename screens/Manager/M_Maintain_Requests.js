@@ -1,152 +1,58 @@
 // import { StatusBar } from "expo-status-bar";
-import {
-    Text,
-    View,
-    StyleSheet,
-    Image,
-    TextInput,
-    ScrollView,
-    Pressable,
-} from "react-native";
-import Icon from "react-native-vector-icons/FontAwesome5";
-// import Constants from "expo-constants";
+import { Text, View, StyleSheet, ScrollView } from "react-native";
+import HeadingView from "../../components/headingView";
+import ViewBox from "../../components/viewBox";
+import { useEffect, useState, } from "react";
+import firebase from "firebase/compat/app";
+import "firebase/compat/firestore";
 
-function ViewBox(props) {
-    return (
-        <Pressable onPress={props.func}>
-            <View style={styles.viewbox}>
-                <Image
-                    style={styles.img}
-                    source={props.img}
-                />
-                <View style={styles.viewboxContent}>
-                    <Text style={styles.smallheading}>{props.title}</Text>
-                    <Text style={styles.text}>{props.name}</Text>
+export default function M_Maintain_Request({ navigation }) {
+  const [data, setData] = useState([]);
 
-                </View>
-            </View>
-        </Pressable>
-    );
-}
-
-export default function M_Complaints({ navigation }) {
-
-    function nav() {
-        navigation.navigate("M_Complaints_Info");
-    }
-
-    return (
-        <View style={styles.mainContainer}>
-            <View style={styles.topContainer}>
-                <Icon name="users" size={32} solid color="#eeeeee" />
-                <Text style={styles.heading}>Maintannence Requests</Text>
-            </View>
-
-
-
-            <ScrollView>
-                <View style={styles.viewboxContainer}>
-                    <ViewBox
-                        title="Plumbing Maintenance Request"
-                        name="Humza"
-
-                        func={nav}
-                        img={require("../../assets/avatar1.png")}
-                    />
-                    <ViewBox
-                        title="Electricity Maintenance Request"
-                        name="Ehtsham"
-
-                        func={nav}
-                        img={require("../../assets/avatar2.png")}
-                    />
-                    <ViewBox
-                        title="Plumbing Maintenance Request"
-                        name="Humza"
-
-                        func={nav}
-                        img={require("../../assets/avatar1.png")}
-                    />
-                    <ViewBox
-                        title="Electricity Maintenance Request"
-                        name="Ehtsham"
-
-                        func={nav}
-                        img={require("../../assets/avatar2.png")}
-                    />
-                    <ViewBox
-                        title="Cable Maintenance Request"
-                        name="Humza"
-
-                        func={nav}
-                        img={require("../../assets/avatar1.png")}
-                    />
-                    <ViewBox
-                        title="Plumbing Maintenance Request"
-                        name="Ehtsham"
-
-                        func={nav}
-                        img={require("../../assets/avatar2.png")}
-                    />
-                </View>
-            </ScrollView>
-        </View>
-    );
+  useEffect(() => {
+    console.log("Maintencance Enter");
+    const firestore = firebase.firestore();
+    // STORE USER DATA INTO CLOUD FIRESTORE
+    firestore
+      .collection("maintenance")
+      .get()
+      .then((snapshot) => {
+        const dataas = []
+        snapshot.forEach((doc) => {
+          dataas.push({
+            id: doc.id,
+            title: doc.data().title,
+            description: doc.data().description,
+          })
+        });
+        setData(dataas);
+      })
+      .catch((error) => {
+        console.log("Error getting documents:", error);
+      });
+  }, [])
+  return (
+    <View style={styles.mainContainer}>
+      <HeadingView text="Maintenance Requests" icon="tools" />
+      <ScrollView style={styles.viewboxContainer}>
+        {data.map((item, index) => (<ViewBox
+          title={item.title}
+          text={item.description}
+          func={() => navigation.navigate("M_Maintain_Info", { id: item.id, title: item.title, description: item.description })}
+          icon="hammer"
+        />))
+        }
+      </ScrollView>
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({
-    mainContainer: {
-        justifyContent: "center",
-        // paddingTop: Constants.statusBarHeight,
-    },
-    topContainer: {
-        backgroundColor: "#00ADB5",
-        alignItems: "center",
-        paddingTop: 30,
-        paddingBottom: 15,
-        flexDirection: "row",
-        justifyContent: "center",
-    },
-    heading: {
-        fontSize: 30,
-        color: "#eeeeee",
-        marginLeft: 10,
-    },
-    searchContainer: {
-        flexDirection: "row",
-        paddingVertical: 20,
-        paddingHorizontal: 10,
-        alignItems: "center",
-        backgroundColor: "#00ADB5",
-    },
-
-    viewboxContainer: {
-        paddingTop: 7,
-        paddingHorizontal: 10,
-        paddingBottom: 90,
-        backgroundColor: "#e9e9e9",
-    },
-    viewbox: {
-        borderRadius: 10,
-        flexDirection: "row",
-        alignItems: "center",
-        paddingHorizontal: 25,
-        paddingVertical: 15,
-        marginBottom: 7,
-        backgroundColor: "#ffffff",
-    },
-    viewboxContent: {
-        marginLeft: 20,
-    },
-    smallheading: {
-        fontSize: 18,
-    },
-    text: {
-        margin: 5,
-    },
-    img: {
-        width: 65,
-        height: 65,
-        borderRadius: 50,
-    },
+  mainContainer: {
+    flex: 1,
+    paddingHorizontal: 20,
+  },
+  viewboxContainer: {
+    paddingHorizontal: 4,
+  },
 });

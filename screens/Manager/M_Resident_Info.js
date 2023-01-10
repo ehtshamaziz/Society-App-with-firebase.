@@ -1,63 +1,90 @@
-import {
-  Text,
-  View,
-  Image,
-  StyleSheet,
-  TextInput,
-  Pressable,
-} from "react-native";
-import React from "react";
+import { Text, View, Image, StyleSheet, TextInput } from "react-native";
+import React, { useState } from "react";
 import Icon from "react-native-vector-icons/FontAwesome5";
 import CustomButton from "../../components/button";
+import InputContainer from "../../components/inputContainer2";
+import firebase from "firebase/compat/app";
+import "firebase/compat/firestore";
 
-export default function M_Resident_Info({ navigation }) {
+export default function M_Resident_Info({ navigation, route }) {
+  const [cnic, setCnic] = useState(route.params.cnic);
+  const [name, setName] = useState(route.params.name);
+  const [password, setPassword] = useState(route.params.password);
+  const [plotNumber, setPlotNumber] = useState(route.params.plotNumber);
+  const [plotSize, setPlotSize] = useState(route.params.plotSize);
+  const [number, setNumber] = useState(route.params.number);
+
+  const firestore = firebase.firestore();
+
+  async function remove() {
+    firestore.collection("users").doc(route.params.id).delete()
+      .then(() => { console.log("Deleted") })
+      .then(() => navigation.navigate('M_Residents'))
+      .catch((error) => console.log(error));
+  }
+
+  async function update() {
+    firestore.collection("users").doc(route.params.id)
+      .set({
+        cnic: cnic,
+        name: name,
+        password: password,
+        plotNumber: plotNumber,
+        plotSize: plotSize,
+        number: number
+      })
+      .then(() => navigation.navigate('M_Residents'))
+      .catch((error) => console.log(error));
+  }
+
   return (
     <View style={styles.mainContainer}>
-      <Image
-        style={styles.img}
-        source={require("../../assets/avatar1.png")}
-      />
+      <View style={styles.imgContainer}>
+        <Image
+          style={styles.img}
+          source={require("../../assets/avatar1.png")}
+        />
+      </View>
       <View style={styles.inputContainer}>
-        <Text style={styles.inputText}>Name:</Text>
-        <TextInput style={styles.input} value="Humza Irfan" />
-        <Text style={styles.inputText}>CNIC:</Text>
-        <View style={styles.inputHorizontalContainer}>
-          <TextInput
-            maxLength={5}
-            style={[styles.input, { marginRight: 8, flex: 4 }]}
-            value="37451"
+        <InputContainer text="Name" value={name} setValue={setName} />
+
+        <View style={{ flexDirection: "row" }}>
+          <InputContainer
+            text="Password"
+            style={{ flex: 1, marginRight: 15 }}
+            value={password}
+            setValue={setPassword}
           />
-          <TextInput
-            maxLength={7}
-            style={[styles.input, { marginRight: 8, flex: 7 }]}
-            value="1234123"
-          />
-          <TextInput
-            maxLength={1}
-            style={[styles.input, { flex: 1 }]}
-            value="1"
+          <InputContainer
+            text="Phone No"
+            style={{ flex: 1 }}
+            value={number}
+            setValue={setNumber}
           />
         </View>
+        <InputContainer text="CNIC" value={cnic} setValue={setCnic} />
 
-        <View style={styles.inputHorizontalContainer}>
-          <View style={{ flex: 4, marginRight: 20 }}>
-            <Text style={styles.inputText}>Plot #:</Text>
-            <TextInput style={styles.input} value="122" />
-          </View>
-          <View style={{ flex: 5 }}>
-            <Text style={styles.inputText}>Plot Size (Marla):</Text>
-            <TextInput style={styles.input} value="10" />
-          </View>
+        <View style={{ flexDirection: "row" }}>
+          <InputContainer
+            text="Plot #"
+            style={{ flex: 1, marginRight: 15 }}
+            value={plotNumber}
+            setValue={setPlotNumber}
+          />
+          <InputContainer
+            text="Plot Size"
+            style={{ flex: 1 }}
+            value={plotSize}
+            setValue={setPlotSize}
+          />
         </View>
-
-        <Text style={styles.inputText}>Phone #:</Text>
-        <TextInput style={styles.input} value="+923569376202" />
 
         <View style={{ flexDirection: "row" }}>
           <CustomButton
             text="UPDATE"
             style={styles.customButton}
             icon="upload"
+            func={update}
           />
           <CustomButton
             text="DELETE"
@@ -66,7 +93,7 @@ export default function M_Resident_Info({ navigation }) {
               { backgroundColor: "red", marginLeft: 15 },
             ]}
             icon="trash"
-            func={() => navigation.navigate("M_Residents")}
+            func={remove}
           />
         </View>
       </View>
@@ -77,8 +104,11 @@ export default function M_Resident_Info({ navigation }) {
 const styles = StyleSheet.create({
   mainContainer: {
     flexDirection: "column",
-    alignItems: "center",
     paddingVertical: 20,
+    paddingHorizontal: 20,
+  },
+  imgContainer: {
+    alignItems: "center",
   },
   img: {
     width: 120,
@@ -90,10 +120,10 @@ const styles = StyleSheet.create({
   },
   inputContainer: {
     marginTop: 10,
-    width: 320,
+    paddingHorizontal: 10,
   },
   inputText: {
-    fontSize: 18,
+    fontSize: 16,
     marginLeft: 4,
   },
   input: {
@@ -105,7 +135,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     borderWidth: 2,
     borderColor: "#eaeaea",
-    fontSize: 18,
+    fontSize: 16,
     textAlign: "center",
     letterSpacing: 1,
   },
